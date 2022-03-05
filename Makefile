@@ -97,7 +97,7 @@ MERGE_LDFLAGS ?=
 BUILD_FILE ?= build/ubuntu.make
 
 LINK_PATH := -L target/lib
-LD_LIBS :=  -lpthread -lm -lrt -ldl -lresolv
+LD_LIBS :=  -lpthread -lm -lrt -ldl -lresolv -lncurses
 PLATFORM_LIBS :=
 
 ######################################
@@ -148,7 +148,7 @@ MAKEFILE_BUILD := scripts/Makefile.build
 MAKEFILE_TEST_BUILD := scripts/Makefile.test.build
 export MAKEFILE_BUILD MAKEFILE_TEST_BUILD
 
-dirs := util/ 
+dirs := util/ third_party/
 dirs := ${patsubst %/,%,$(filter %/, $(dirs))}
 PHONY += $(dirs)
 $(dirs): FORCE
@@ -159,7 +159,7 @@ build_comm_dym_lib: FORCE
 	@$(call log-cmd, "Start building a shared library now...")
 	@$(shell rm -f ${LIBCOMM_D_NAME})
 	$(CC) ${CFLAGS} ${MERGE_LDFLAGS} -o ${LIBCOMM_D_NAME} ${LINK_PATH} \
-	${LINK_STATIC} -Wl,--whole-archive ${shell ls ${INSTALL_LIB}/*.a} ${PLATFORM_LIBS} -Wl,--no-whole-archive \
+	${LINK_STATIC} -z muldefs -Wl,--whole-archive ${shell ls ${INSTALL_LIB}/*.a} ${PLATFORM_LIBS} -Wl,--no-whole-archive \
 	${LINK_SHARED} ${LINK_COMMON_DEP_DLIBS}
 	@$(call log-cmd, "make libcore.so SUCC...")
 
@@ -167,7 +167,7 @@ build_comms_static_lib: FORCE
 	@$(call log-echo, "make build all common library over !!! ")
 	@$(call log-cmd, "Start building a static library now...")
 	@$(shell rm -f ${LIBCOMM_S_NAME})
-	${LD} -r -o ${LIBCOMM_S_NAME}  ${LINK_PATH} --whole-archive ${shell ls ${INSTALL_LIB}/*.a} ${PLATFORM_LIBS} --no-whole-archive
+	${LD} -z muldefs -r -o ${LIBCOMM_S_NAME}  ${LINK_PATH} --whole-archive ${shell ls ${INSTALL_LIB}/*.a} ${PLATFORM_LIBS} --no-whole-archive 
 	@$(call log-cmd, "make static library SUCC...")
 
 
@@ -188,12 +188,7 @@ $(test_dirs): FORCE
 test: $(test_dirs) FORCE
 
 opensouce_clean: FORCE
-	@rm -fr platform/os/linux_glib/glib/zlib-1.2.11
-	@rm -fr platform/os/linux_glib/glib/glib-2.40.2
-	@rm -fr platform/os/linux_glib/glib/libffi-3.2.1
-	@rm -fr platform/os/linux/ubus/json-c
-	@rm -fr platform/os/linux/ubus/libubox
-	@rm -fr platform/os/linux/ubus/ubus
+	@rm -fr third_party/readline-8.0
 	@exit 0
 
 clean: FORCE
