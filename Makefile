@@ -38,11 +38,8 @@ HOME=$(shell cd ~ && pwd)
 
 # How to install. If your install program does not support "-p", then
 # you may have to run ranlib on the installed liblua.a.
-INSTALL= install -p
-INSTALL_EXEC= $(INSTALL) -m 0755
-INSTALL_DATA= $(INSTALL) -m 0644
 
-export MKDIR MAKE PWD HOME INSTALL INSTALL_EXEC INSTALL_DATA
+export MKDIR MAKE PWD HOME
 #****************************************************************************
 # functions defined: LOG
 #****************************************************************************
@@ -97,7 +94,7 @@ MERGE_LDFLAGS ?=
 BUILD_FILE ?= build/ubuntu.make
 
 LINK_PATH := -L target/lib
-LD_LIBS :=  -lpthread -lm -lrt -ldl -lresolv -lncurses
+LD_LIBS :=  -lpthread -lm -lrt -ldl -lresolv
 PLATFORM_LIBS :=
 
 ######################################
@@ -120,8 +117,6 @@ CFLAGS += -fPIC -rdynamic -pipe -O2 -Wall
 CFLAGS += -I ${CURDIR}/include 
 CFLAGS += -I ${CURDIR}/target/include
 CFLAGS += -I ${CURDIR}/include/util
-CFLAGS += -I ${CURDIR}/platform/bsp/include
-CFLAGS += -I ${CURDIR}/platform/os/include
 CFLAGS += -I ${CURDIR}/util
 
 
@@ -189,6 +184,7 @@ test: $(test_dirs) FORCE
 
 opensouce_clean: FORCE
 	@rm -fr third_party/readline-8.0
+	@rm -fr third_party/ncurses-6.2
 	@exit 0
 
 clean: FORCE
