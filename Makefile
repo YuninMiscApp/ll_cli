@@ -118,6 +118,8 @@ CFLAGS += -I ${CURDIR}/include
 CFLAGS += -I ${CURDIR}/target/include
 CFLAGS += -I ${CURDIR}/include/util
 CFLAGS += -I ${CURDIR}/util
+CFLAGS += -I ${CURDIR}/modules/os
+CFLAGS += -I ${CURDIR}/modules/include
 
 
 #LDFLAGS += -rdynamic -shared 
@@ -143,7 +145,7 @@ MAKEFILE_BUILD := scripts/Makefile.build
 MAKEFILE_TEST_BUILD := scripts/Makefile.test.build
 export MAKEFILE_BUILD MAKEFILE_TEST_BUILD
 
-dirs := util/ third_party/
+dirs := util/ modules/ third_party/
 dirs := ${patsubst %/,%,$(filter %/, $(dirs))}
 PHONY += $(dirs)
 $(dirs): FORCE
