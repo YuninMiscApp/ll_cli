@@ -53,10 +53,10 @@ os_broadcast_t *os_broadcast_create(os_broadcast_type_e type,unsigned short port
 	}
 	bzero(&b->addr,sizeof(struct sockaddr_in));
 	b->addr.sin_family = AF_INET;
-	b->addr.sin_addr.s_addr = (BROADCAST_TYPE_CLIENT == type)? htonl(INADDR_ANY) : htonl(INADDR_BROADCAST);
+	b->addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	b->addr.sin_port = htons(port);
 
-	if(BROADCAST_TYPE_CLIENT == type)
+	if(BROADCAST_TYPE_SERVER == type)
 	{
 		if(-1 == bind(b->socket_fd,(struct sockaddr*)&(b->addr),sizeof(b->addr)))
 		{

@@ -10,6 +10,9 @@ enum ll_cmd_flags {
 	ll_cmd_flag_sensitive   = 0x01
 };
 
+
+#define COMMAND_PORT 12366
+
 typedef struct ll_ctrl_s ll_ctrl_t;
 
 typedef struct ll_cli_cmd_s {
@@ -23,6 +26,7 @@ typedef struct ll_cli_cmd_s {
 
 
 int commands_init(void);
+void commands_exit(void);
 
 
 #ifdef  __cplusplus

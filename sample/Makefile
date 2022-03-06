@@ -1,5 +1,5 @@
 
 obj-y :=
-obj-y += ll_dameon.o
+obj-y += ll_daemon.o
 
 

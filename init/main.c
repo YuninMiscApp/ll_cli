@@ -8,9 +8,13 @@
 
 int main (int argc, char *argv[])
 {
-	commands_init();
+	if(0 != commands_init())
+	{
+		return -1;
+	}
 	while(1) 
 		sleep(1);
+	commands_exit();
 	return 0;
 }
 

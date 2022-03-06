@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <errno.h>
 
 #include "commands.h"
 #include "cmd_edit.h"
@@ -10,6 +11,21 @@
 struct ll_ctrl_s {
 	int res;
 };
+
+static os_broadcast_t *g_os_broadcast = NULL;
+
+#define CMD_SEND(_data_,_data_size_) ({ \
+	int _ret_ = -1;\
+	if((_ret_ = os_broadcast_send(g_os_broadcast, _data_, _data_size_)) < 0) \
+		MLOGE("send cmd fail(%d)!!! %s (%d)",_ret_,strerror(errno),errno);\
+})
+
+#define CMD_RECV(_data_,_data_size_,_ret_) ({ \
+		if((_ret_ = os_broadcast_recv(g_os_broadcast, _data_, _data_size_)) < 0) \
+			MLOGE("send cmd fail(%d)!!! %s (%d)",_ret_,strerror(errno),errno);\
+		else \
+			MLOGM(" %s ",_data_);\
+	})
 
 
 static void print_help(const char *cmd);
@@ -45,6 +61,7 @@ static int cli_cmd_wifi_connect(ll_ctrl_t *ctrl, int argc, char *argv[])
 {
 	const char *ssid,*passwd;
 	int sec = 0;
+	int ret = 0;
 	if(argc < 3)
 	{
 		MLOGE("wifi_connect '\"[ssid]\"' '\"[passwd]\"' [encryption] = connecting WIFI." );
@@ -54,6 +71,11 @@ static int cli_cmd_wifi_connect(ll_ctrl_t *ctrl, int argc, char *argv[])
 	passwd = argv[1];
 	sec = atoi(argv[2]);
 	MLOGM("wifi_connect %s %s %d",ssid,passwd,sec);
+	char buf[1024] = {0};
+	snprintf(buf,sizeof(buf),"wifi_connect %s %s %d",ssid,passwd,sec);
+	CMD_SEND((unsigned char *)buf, strlen(buf));
+	bzero(buf, sizeof(buf));
+	CMD_RECV((unsigned char *)buf, sizeof(buf),ret);
 	return 0;
 }
 
@@ -189,10 +211,16 @@ static void commands_handler(const char *cmd,void *user_data)
 int commands_init(void)
 {
 	ll_ctrl_t *ctrl = NULL;
+	g_os_broadcast = os_broadcast_create(BROADCAST_TYPE_CLIENT, COMMAND_PORT);
+	RETURN_VAL_IF_FAIL(g_os_broadcast, -1);
 	return cmd_edit_init(commands_handler,ctrl);
 }
 
 
 
+void commands_exit(void)
+{
+	os_broadcast_destroy(g_os_broadcast);
+}
 
 
