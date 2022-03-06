@@ -120,6 +120,7 @@ CFLAGS += -I ${CURDIR}/include/util
 CFLAGS += -I ${CURDIR}/util
 CFLAGS += -I ${CURDIR}/modules/os
 CFLAGS += -I ${CURDIR}/modules/include
+CFLAGS += -I ${CURDIR}/modules/commands
 
 
 #LDFLAGS += -rdynamic -shared 
