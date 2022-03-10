@@ -8,6 +8,7 @@
 
 int main (int argc, char *argv[])
 {
+	setenv("TERMINFO","/usr/share/terminfo",1);
 	if(0 != commands_init())
 	{
 		return -1;
